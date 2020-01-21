@@ -22,16 +22,53 @@ class PCA:
         covMat = self.covarianceMat()
         return np.linalg.eig(covMat)
 
-    def fit(self):
+    def transform(self):
         eigVals, eigVecs = self.getEigVal()
-        return eigVecs[:, 0 : self.k]
+        reducedEigVec = eigVecs[:, 0 : self.k]
+        # m = np.matrix(np.zeros((self.noOfRows, self.k)))
+        # transformedList = []
+        # for i in range(self.data.shape[0]):
+        #     m[i] = (reducedEigVec.T * self.data[i].T).T
+        # return m
+        return self.data * reducedEigVec
 
 def main():
-    m = np.matrix([[9,8,4], [9,6,8], [6,5,7], [3,4,7], [3,2,9]], dtype='float')
-    pca = PCA(m, 2)
-    print(pca.data)
-    print(pca.getEigVal())
-    print(pca.fit())
+    import sklearn as sk
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D
+
+    from sklearn.datasets import load_breast_cancer
+    rawData = load_breast_cancer()
+    trainingData = rawData.data
+    trainngLevels = rawData.target
+
+    pca = PCA(trainingData, 3)
+    reducedData = pca.transform()
+    print("shape of reduced data", reducedData.shape)
+
+    malignant, benign = [], []
+
+    for i in range(trainngLevels.shape[0]):
+        if trainngLevels[i] == 0:
+            benign.append([reducedData[i, 0], reducedData[i, 1], reducedData[i, 2]])
+        else:
+            malignant.append([reducedData[i, 0], reducedData[i, 1], reducedData[i, 2]])
+
+    benign = np.array(benign)
+    malignant = np.array(malignant)
+    
+    plt.plot(benign[:, 0], benign[:, 1], '.')
+    plt.plot(malignant[:, 0], malignant[:, 1], '.')
+    plt.show()
+    
+    fig = plt.figure()
+    ax = Axes3D(fig)
+    ax.plot3D(benign[:, 0], benign[:, 1], benign[:,2], '.')
+    ax.plot3D(malignant[:, 0], malignant[:, 1], malignant[:, 2], '.')
+    plt.show()
+    
+    
+
 
 if __name__ == "__main__":
     main()
