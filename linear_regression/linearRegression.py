@@ -1,6 +1,7 @@
 import numpy as np
 from numpy import genfromtxt
 import matplotlib.pyplot as plt
+from sklearn import linear_model
 
 class LinearRegression:
     def __init__(self, x=np.zeros(5), y=np.zeros(5)):
@@ -153,9 +154,15 @@ def main1():
     y_train = y[:trainingIndex , :]
     y_test = y[trainingIndex: , :]
 
-    linReg = LinearRegression(x = x_train, y = y_train)
-    theta = linReg.train(animation=True, thresHold=0.0001, alpha=0.01)
-    y_pred = linReg.test(x_test)
+    #with sklearn
+    linReg = linear_model.LinearRegression()
+    linReg.fit(x_train, y_train)
+    y_pred = linReg.predict(x_test)
+
+    #with own algo
+    # linReg = LinearRegression(x = x_train, y = y_train)
+    # theta = linReg.train(animation=True, thresHold=0.0001, alpha=0.01)
+    # y_pred = linReg.test(x_test)
 
     print(y_pred)
     print(y_test)

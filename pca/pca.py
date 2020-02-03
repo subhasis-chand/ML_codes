@@ -4,10 +4,10 @@ class PCA:
     def __init__(self, data, k):
         if type(data) is not np.ndarray and type(data) is not np.matrix:
             print("data must be numpy array")
-            return
+            exit()
         if data.shape[1] <= k:
             print("k must be less than number of features")
-            return
+            exit()
         self.data = np.matrix(data, dtype='float')
         self.k = k
         self.noOfRows = self.data.shape[0]
@@ -38,13 +38,20 @@ def main():
     from mpl_toolkits.mplot3d import Axes3D
 
     from sklearn.datasets import load_breast_cancer
+    from sklearn import decomposition
     rawData = load_breast_cancer()
     trainingData = rawData.data
     trainngLevels = rawData.target
 
-    pca = PCA(trainingData, 3)
-    reducedData = pca.transform()
-    print("shape of reduced data", reducedData.shape)
+    # Own PCA implementation
+    # pca = PCA(trainingData, 3)
+    # reducedData = pca.transform()
+    # print("shape of reduced data", reducedData.shape)
+
+    #sklearn PCA implementation
+    pca = decomposition.PCA(n_components=3)
+    pca.fit(trainingData)
+    reducedData = pca.transform(trainingData)
 
     malignant, benign = [], []
 
