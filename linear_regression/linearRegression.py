@@ -1,16 +1,18 @@
 import numpy as np
+from numpy import genfromtxt
 import matplotlib.pyplot as plt
 
 class LinearRegression:
-    def __init__(self, x=np.zeros(5), y=np.zeros(5), alpha = 1):
+    def __init__(self, x=np.zeros(5), y=np.zeros(5)):
         if type(x) is not np.matrix:
             print("input x must be numpy matrix")
-            return
+            exit()
         if type(y) is not np.matrix:
             print("output y must be numpy matrix")
-            return
+            exit()
         if x.shape[0] != x.shape[0]:
             print("no of training examples for input and out put must be the same")
+            exit()
         # print("x: ", x)
         # print("y: ", y)
         # exit()
@@ -22,7 +24,6 @@ class LinearRegression:
         # y = y / y.max()
         self.x = np.hstack((x0, x))
         self.y = y
-        self.alpha = alpha
         self.m = self.x.shape[0]
         self.n = self.x.shape[1]
         self.theta = np.matrix(np.ones((self.n, 1)))
@@ -37,7 +38,7 @@ class LinearRegression:
             l += (self.hypothesis(row) - self.y[i, 0]) ** 2
         return l / (2.0 * self.m)
 
-    def gradientDescent(self, animation=False, printLoss=False, printTheta=False, thresHold=0.001 ):
+    def gradientDescent(self, animation=False, printLoss=False, printTheta=False, thresHold=0.001, alpha=0.01 ):
         fig = plt.figure()    
         ax = fig.subplots(1, 2)
 
@@ -55,7 +56,7 @@ class LinearRegression:
                 for j in range(self.m):
                     row = self.x[j, :].T
                     l += (self.hypothesis(row) - self.y[j, 0]) * self.x[j, i] 
-                theta[i, 0] = self.theta[i, 0] - self.alpha * l / (float(self.m))
+                theta[i, 0] = self.theta[i, 0] - alpha * l / (float(self.m))
             self.theta = np.copy(theta)
             actualLoss = self.loss()[0,0]
             lossArr.append(actualLoss)
@@ -100,6 +101,14 @@ class LinearRegression:
                     plt.show()
                 return self.theta
 
+    def train(self, animation=False, printLoss=False, printTheta=False, thresHold=0.001, alpha=0.01):
+        return self.gradientDescent(animation, printLoss, printTheta, thresHold, alpha)
+
+    def test(self, x_test):
+        x0 = np.matrix(np.ones((x_test.shape[0], 1)))
+        x_test = np.hstack((x0, x_test))
+        return x_test * self.theta
+
 
 
 
@@ -122,10 +131,40 @@ def main():
     print(theta)
     print(linReg.loss())
 
+def main1():
+    # admissionData = genfromtxt("../resources/graduate-admissions/Admission_Predict_Ver1.1.csv", delimiter=',')
+    admissionData = genfromtxt("../resources/graduate-admissions/Admission_Predict.csv", delimiter=',')
+    x = np.matrix(admissionData[1:, 1:-1])
+    x[:, 0] = x[:, 0]/340.0
+    x[:, 1] = x[:, 1]/120.0
+    x[:, 2] = x[:, 2]/5.0
+    x[:, 3] = x[:, 3]/5.0
+    x[:, 4] = x[:, 4]/5.0
+    x[:, 5] = x[:, 5]/10.0
 
+    y = np.matrix(admissionData[1:, -1:])
+
+    trainnigSetPercent = 75.0
+    trainingIndex = int(x.shape[0] * trainnigSetPercent / 100.0)
+    
+    x_train = x[:trainingIndex , :]
+    x_test = x[trainingIndex: , :]
+
+    y_train = y[:trainingIndex , :]
+    y_test = y[trainingIndex: , :]
+
+    linReg = LinearRegression(x = x_train, y = y_train)
+    theta = linReg.train(animation=True, thresHold=0.0001, alpha=0.01)
+    y_pred = linReg.test(x_test)
+
+    print(y_pred)
+    print(y_test)
+    plt.plot(y_test, 'r')
+    plt.plot(y_pred, 'g')
+    plt.show()
 
 if __name__ == '__main__':
-    main()
+    main1()
 
 
 
