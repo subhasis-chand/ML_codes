@@ -11,15 +11,8 @@ class LinearRegression:
             return
         if x.shape[0] != x.shape[0]:
             print("no of training examples for input and out put must be the same")
-        # print("x: ", x)
-        # print("y: ", y)
-        # exit()
 
         x0 = np.matrix(np.ones((x.shape[0], 1)))
-        # x = x - np.matrix(np.ones((x.shape[0], x.shape[0]))) * x * (1.0/x.shape[0]) 
-        # y = y - np.matrix(np.ones((y.shape[0], y.shape[0]))) * y * (1.0/y.shape[0]) 
-        # x = x / x.max()
-        # y = y / y.max()
         self.x = np.hstack((x0, x))
         self.y = y
         self.alpha = alpha
@@ -28,7 +21,7 @@ class LinearRegression:
         self.theta = np.matrix(np.ones((self.n, 1)))
 
     def hypothesis(self, x):
-        return self.theta.T * x   #x is a vector
+        return self.theta.T * x
 
     def loss(self):
         l = 0.0
@@ -71,7 +64,6 @@ class LinearRegression:
                     + "    " + "Diff in Loss: " + str(round(diffInLoss, 5))
                 ax[0].set_title(title0)
                 ax[0].set_axisbelow(True)
-                # ax[0].plot([0,10], [0,10], 'x')
                 ax[0].plot(lossArr, '.r')
 
                 if self.n == 2:
@@ -81,7 +73,7 @@ class LinearRegression:
                     ax[1].plot(self.x[:, 1], self.y[:, 0], '.g')
                     ax[1].plot([self.x[0, 1], self.x[-1, -1]], [self.hypothesis(self.x[0, :].T)[0, 0], self.hypothesis(self.x[-1, :].T)[0, 0]], 'r')
 
-                plt.pause(0.3)
+                plt.pause(0.5)
 
             if printTheta:
                 print("theta: ", theta)
@@ -102,27 +94,12 @@ class LinearRegression:
 
 
 
-
-
-
 def main():
-    # x = np.arange(1,15,0.2)
-    # y = 2 + np.random.rand() * np.random.rand(x.shape[0]) * 20
-    # y.sort()
-    # np.savetxt('y_for_lin_reg_one_var.txt', y)
-    # np.savetxt('x_for_lin_reg_one_var.txt', x)
-
-    x = np.loadtxt("../resources/x_for_lin_reg_one_var.txt")
-    y = np.loadtxt("../resources/y_for_lin_reg_one_var.txt")
-
+    x = np.loadtxt("../resources/linRegOneVar/x_for_lin_reg_one_var.txt")
+    y = np.loadtxt("../resources/linRegOneVar/y_for_lin_reg_one_var.txt")
 
     linReg = LinearRegression(np.matrix(x).T, np.matrix(y).T, 0.001)
-    print(linReg.loss())
     theta = linReg.gradientDescent(animation=True, thresHold=0.0001)
-    print(theta)
-    print(linReg.loss())
-
-
 
 if __name__ == '__main__':
     main()
