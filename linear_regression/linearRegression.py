@@ -9,7 +9,7 @@ class LinearRegression:
         if type(y) is not np.matrix:
             print("output y must be numpy matrix")
             exit()
-        if x.shape[0] != x.shape[0]:
+        if x.shape[0] != y.shape[0]:
             print("no of training examples for input and out put must be the same")
             exit()
 
