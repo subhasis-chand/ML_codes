@@ -42,8 +42,10 @@ class kMeans():
         bestClusterCenters = np.copy(self.clusterCenters)
         bestY = np.copy(self.y)
         leastLoss = self.loss()
-        fig = plt.figure()    
-        ax = fig.subplots()
+
+        if animation:
+            fig = plt.figure()    
+            ax = fig.subplots()
 
         for ite in range(noOfIter):
             print("No of iteration: ", ite+1)
