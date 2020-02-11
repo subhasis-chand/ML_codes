@@ -20,7 +20,6 @@ def generateFourClusters2dData():
 
 def main():
     import time
-    time.sleep(2)
     data = generateFourClusters2dData()
     kmeans = kMeans(data)
     y = kmeans.run(k=4, animation=True, printClusterCenter=True, printLoss=True)
