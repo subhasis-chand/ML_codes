@@ -38,46 +38,60 @@ class kMeans():
 
     def run(self, k = 3, threshold=0.01, animation=False, noOfIter=30, printClusterCenter=False, printLoss=False):
         self.randomInitClusterCenters(k)
-        for i in range(noOfIter):
-            self.assignCluster()
-            self.moveClusterCenters()
-            if printLoss:
-                print("Loss is: ", self.loss())
-            if printClusterCenter:
-                print(self.clusterCenters)
-            if animation and self.n == 2:
-                plt.cla()
-                plt.plot(self.clusterCenters[:, 0], self.clusterCenters[:, 1], 'x')
-                for i in range(self.clusterCenters.shape[0]):
-                    clusteredData = self.x[self.y == i]
-                    plt.plot(clusteredData[:, 0], clusteredData[:, 1], '.')
-                plt.pause(0.2)
-            if animation and self.n != 2:
-                print("To show the animation, no of features should be equal to two")
-        plt.show()
+        prevLoss = self.loss()
+        bestClusterCenters = np.copy(self.clusterCenters)
+        bestY = np.copy(self.y)
+        leastLoss = self.loss()
+        fig = plt.figure()    
+        ax = fig.subplots()
+
+        for ite in range(noOfIter):
+            print("No of iteration: ", ite+1)
+            self.randomInitClusterCenters(k)
+            prevLoss = self.loss()
+            while True:
+                self.assignCluster()
+                self.moveClusterCenters()
+                currentLoss = self.loss()
+                if printLoss:
+                    print("Loss is: ", self.loss())
+                if printClusterCenter:
+                    print("cluster center is", self.clusterCenters)
+                if animation and self.n == 2:
+                    plt.cla()
+                    ax.plot(self.clusterCenters[:, 0], self.clusterCenters[:, 1], 'x')
+                    for i in range(self.clusterCenters.shape[0]):
+                        clusteredData = self.x[self.y == i]
+                        ax.plot(clusteredData[:, 0], clusteredData[:, 1], '.')
+                    title = "Iteration: " + str(ite+1)
+                    ax.set_title(title)
+                    plt.pause(0.2)
+                if animation and self.n != 2:
+                    print("To show the animation, no of features should be equal to two. \n \
+                        Otherwise how do you expect to visualise a multi-dimensional data on a 2D display?")
+                if abs(currentLoss - prevLoss) < threshold:
+                    break
+                else:
+                    prevLoss = currentLoss
+
+            if currentLoss < leastLoss:
+                bestClusterCenters = np.copy(self.clusterCenters)
+                bestY = np.copy(self.y)
+                leastLoss = currentLoss
+
+        self.clusterCenters = np.copy(bestClusterCenters)
+        self.y = np.copy(bestY)
+        self.loss = leastLoss
+            
+        if animation:
+            plt.close()
+            fig = plt.figure()    
+            ax = fig.subplots()
+            ax.plot(self.clusterCenters[:, 0], self.clusterCenters[:, 1], 'x')
+            for i in range(self.clusterCenters.shape[0]):
+                clusteredData = self.x[self.y == i]
+                ax.plot(clusteredData[:, 0], clusteredData[:, 1], '.')
+            ax.set_title("The best possible clustering out of all the iteration")
+            plt.show()
         return self.y
 
-
-
-def generateThreeClusters2dData():
-    #generate a sample 2d data
-    data = np.zeros((90, 2))
-
-    for i in range(90):
-        if i < 30:
-            x_c, y_c = 1.0, 1.0
-        elif i >= 30 and i < 60:
-            x_c, y_c = 3.0, 3.0
-        else:
-            x_c, y_c = 4.0, 2.0
-        data[i] = np.array([ x_c + np.random.rand(), y_c + np.random.rand()])
-    
-    return np.matrix(data)
-
-def main():
-    data = generateThreeClusters2dData()
-    kmeans = kMeans(data)
-    kmeans.run(animation=True, printClusterCenter=True, printLoss=True)
-
-if __name__ == "__main__":
-    main()
