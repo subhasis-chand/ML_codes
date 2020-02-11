@@ -36,7 +36,7 @@ class kMeans():
         return self.totalLoss
 
 
-    def run(self, k = 3, threshold=0.01, animation=False, noOfIter=30, printClusterCenter=False, printLoss=False):
+    def run(self, k = 3, threshold=0.01, animation=False, noOfIter=30, printClusterCenter=False, printLoss=False, printItererationNo=False):
         self.randomInitClusterCenters(k)
         prevLoss = self.loss()
         bestClusterCenters = np.copy(self.clusterCenters)
@@ -48,7 +48,8 @@ class kMeans():
             ax = fig.subplots()
 
         for ite in range(noOfIter):
-            print("No of iteration: ", ite+1)
+            if printItererationNo:
+                print("No of iteration: ", ite+1)
             self.randomInitClusterCenters(k)
             prevLoss = self.loss()
             while True:
@@ -61,10 +62,10 @@ class kMeans():
                     print("cluster center is", self.clusterCenters)
                 if animation and self.n == 2:
                     plt.cla()
-                    ax.plot(self.clusterCenters[:, 0], self.clusterCenters[:, 1], 'x')
                     for i in range(self.clusterCenters.shape[0]):
                         clusteredData = self.x[self.y == i]
                         ax.plot(clusteredData[:, 0], clusteredData[:, 1], '.')
+                    ax.plot(self.clusterCenters[:, 0], self.clusterCenters[:, 1], 'xk')
                     title = "Iteration: " + str(ite+1)
                     ax.set_title(title)
                     plt.pause(0.2)
@@ -83,7 +84,7 @@ class kMeans():
 
         self.clusterCenters = np.copy(bestClusterCenters)
         self.y = np.copy(bestY)
-        self.loss = leastLoss
+        self.totalLoss = leastLoss
             
         if animation:
             plt.close()
@@ -96,4 +97,15 @@ class kMeans():
             ax.set_title("The best possible clustering out of all the iteration")
             plt.show()
         return self.y
+
+    def findOptimumKvalue(self, K = 5):
+        lossArr = []
+        for i in range(2, K+1):
+            print("Running for k = ", i)
+            self.run(k=i, noOfIter=100)
+            lossArr.append(self.totalLoss)
+        
+        print("returning losses from k = ", 2, " to k=", K)
+        return lossArr
+
 

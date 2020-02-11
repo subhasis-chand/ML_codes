@@ -22,7 +22,7 @@ fig = plt.figure()
 ax = fig.subplots(3)
 
 kmeans = kMeans(data)
-kmeans.run(k=3, noOfIter=100)
+kmeans.run(k=3, noOfIter=100, printItererationNo=True)
 for i in range(kmeans.clusterCenters.shape[0]):
     clusteredData = data[kmeans.y == i]
     ax[0].plot(clusteredData[:, 0], clusteredData[:, 1], '.')
@@ -33,7 +33,7 @@ ax[0].set_ylabel("Weight in Kgs")
 
 
 kmeans = kMeans(data)
-kmeans.run(k=4, noOfIter=100)
+kmeans.run(k=4, noOfIter=100, printItererationNo=True)
 for i in range(kmeans.clusterCenters.shape[0]):
     clusteredData = data[kmeans.y == i]
     ax[1].plot(clusteredData[:, 0], clusteredData[:, 1], '.')
@@ -42,7 +42,7 @@ ax[1].set_xlabel("Height in cms")
 ax[1].set_ylabel("Weight in Kgs")
 
 kmeans = kMeans(data)
-kmeans.run(k=5, noOfIter=100)
+kmeans.run(k=5, noOfIter=100, printItererationNo=True)
 for i in range(kmeans.clusterCenters.shape[0]):
     clusteredData = data[kmeans.y == i]
     ax[2].plot(clusteredData[:, 0], clusteredData[:, 1], '.')
