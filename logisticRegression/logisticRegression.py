@@ -34,7 +34,7 @@ class LogisticRegression:
             + np.multiply((1.0 - self.y), np.log(1 - self.hypothesis())))
 
     def gradientDescent(self, animation=False, printLoss=False, printTheta=False, thresHold=0.001, alpha=0.01):
-        self.theta = self.theta - alpha * (self.x.T * (self.hypothesis() - self.y))
+        self.theta = self.theta - alpha * (self.x.T * (self.hypothesis() - self.y)) # This is correct. Don't get confused
         prevLoss = self.loss()
         ite = 1
         lossArr = [prevLoss]
